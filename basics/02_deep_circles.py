@@ -4,16 +4,16 @@ import sys
 
 sys.path.append("Modules")
 import clearterminal
-
 from sklearn.datasets import make_circles
 from sklearn.model_selection import train_test_split
-
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
 from keras.utils.vis_utils import plot_model
 from keras.callbacks import EarlyStopping
 from keras.models import load_model
+
+file_name = '02_deep_circles'
 
 def plot_data(pl, X, y):
     pl.plot(X[y == 0, 0], X[y == 0, 1], 'ob', alpha=0.5)
@@ -60,27 +60,20 @@ model.add(Dense(1, activation="sigmoid", name="output"))
 model.compile(Adam(lr=0.05), "binary_crossentropy", metrics=["accuracy"])
 
 earlystopping_callback = [EarlyStopping(monitor='val_accuracy', patience=15, mode=max)]
-model.fit(X_train, y_train, epochs=10, verbose=1, callbacks=earlystopping_callback, validation_data=(X_test, y_test))
-
-print("-------------------")
+model.fit(X_train, y_train, epochs=100, verbose=1, callbacks=earlystopping_callback, validation_data=(X_test, y_test))
 
 eval_result = model.evaluate(X_test, y_test)
 print("\n\n Round 1 Test loss: ", eval_result[0], " - Test accuracy: ", eval_result[1])
 
-print("-------------------")
 
-model.fit(X_train, y_train, epochs=10, verbose=1, callbacks=earlystopping_callback, validation_data=(X_test, y_test))
-
-eval_result = model.evaluate(X_test, y_test)
-print("\n\n Round 2 Test loss: ", eval_result[0], " - Test accuracy: ", eval_result[1])
+model.save(file_name + '_model.h5')
 
 
-"""
-#plot_decision_boundary(model, X, y).show()
+plot_decision_boundary(model, X, y).show()
 
 
-#plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
-#print(model.summary())
+plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
+print(model.summary())
 
-"""
+
 
