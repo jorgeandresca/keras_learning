@@ -28,8 +28,8 @@ img_rows, img_cols = 28, 28;
 (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
 
 # Shrinking the dataset
-x_train = x_train[:5000]
-y_train = y_train[:5000]
+x_train = x_train[:1]
+y_train = y_train[:1]
 x_test = x_test[:500]
 y_test = y_test[:500]
 
@@ -100,8 +100,8 @@ model.compile(loss=keras.losses.categorical_crossentropy, optimizer='adam', metr
 hist = model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1, validation_data=(x_test, y_test))
 
 # Evaluate the model
-score_train = model.evaluate(x_test, y_test, verbose=0)
-score_test = model.evaluate(x_test, y_test, verbose=0)
+score_train = np.round(model.evaluate(x_test, y_test, verbose=0), 1)
+score_test = np.round(model.evaluate(x_test, y_test, verbose=0), 1)
 print('Test loss: ', score_test[0])
 print('Test accuracy: ', score_test[1])
 
@@ -128,14 +128,16 @@ print("Classification: " + str(prediction))
 
 
 
-# Save the Model
-model.save('04_model.h5')
-plot_model(model, to_file='04_result.png', show_shapes=True, show_layer_names=True)
-
-
 # Print the model
 import matplotlib.pyplot as plt
 epoch_list = list(range(1, len(hist.history['accuracy']) + 1))
 plt.plot(epoch_list, hist.history['accuracy'], epoch_list, hist.history['val_accuracy'])
 plt.legend(('Training Accuracy: ' +  str(score_train[1]), 'Validation Accuracy: ' + str(score_test[1])))
+
+plt.savefig('04_model_chart.png')
+
 plt.show()
+
+# Save the Model
+model.save('04_model.h5')
+plot_model(model, to_file='04_model_arch.png', show_shapes=True, show_layer_names=True)
