@@ -10,17 +10,34 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
+from keras.utils.vis_utils import plot_model
 from keras.models import load_model
+import random
+import numpy as np
 
-model_file_name = '04_fashion_mnist.h5'
+
+
 
 num_classes = 10;
-batch_size = 1;  # 128
-epochs = 1;  # 24
-
+batch_size = 128;  # 128
+epochs = 50;  # 50
+dropout = 0.8
 img_rows, img_cols = 28, 28;
 
+# Load data
 (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
+
+# Shrinking the dataset
+x_train = x_train[:5000]
+y_train = y_train[:5000]
+x_test = x_test[:500]
+y_test = y_test[:500]
+
+print(x_train.shape)
+print(y_train.shape)
+print(x_test.shape)
+print(y_test.shape)
+
 
 input_shape = 0 #any number, it will be updated later
 
@@ -36,6 +53,8 @@ else:
     x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
     x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, 1)
     input_shape = (img_rows, img_cols, 1)
+
+
 
 
 # x_train.shape -> 6000 x 28 x 28 x 1
@@ -66,14 +85,14 @@ model.add(MaxPooling2D(pool_size=(2, 2)))  # 1D: time serie, 3D: Video sequences
 model.add(Flatten())  # from 2D to 1D
 
 model.add(Dense(128, activation='relu'))
-model.add(Dropout(0.5))
+model.add(Dropout(dropout))
 model.add(Dense(num_classes, activation='softmax'))
 
 # print(model.summary())
-# model = load_model(model_file_name)
 
 # Define the compiler to minimize categorical loss
-model.compile(loss=keras.losses.categorical_crossentropy, optimizer=keras.optimizers.Adadelta(), metrics=['accuracy'])
+model.compile(loss=keras.losses.categorical_crossentropy, optimizer='adam', metrics=['accuracy'])
+#model.compile(loss=keras.losses.categorical_crossentropy, optimizer=keras.optimizers.Adadelta(), metrics=['accuracy'])
 
 # Train the model, and test/validate it with the test data after each cycle (epoch)
 # Return history of loss and accuracy for each epic
@@ -81,18 +100,42 @@ model.compile(loss=keras.losses.categorical_crossentropy, optimizer=keras.optimi
 hist = model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1, validation_data=(x_test, y_test))
 
 # Evaluate the model
-score = model.evaluate(x_test, y_test, verbose=0)
-print('Test loss: ', score[0])
-print('Test accuracy: ', score[1])
+score_train = model.evaluate(x_test, y_test, verbose=0)
+score_test = model.evaluate(x_test, y_test, verbose=0)
+print('Test loss: ', score_test[0])
+print('Test accuracy: ', score_test[1])
 
 
 
-model.save('asd.h5')
+
+# Predictions
+
+random = int(random.random() * len(x_test))
+
+x_toPredict = x_test[random]
+y_toPredict = y_test[random]
 
 
+x_toPredict = np.array([x_toPredict])  # shape (1,28,28,1
+print("x_toPredict shape: " + str(x_toPredict.shape))
+
+prediction = model.predict(x=x_toPredict, verbose=1)  # shape (1,10)
+prediction = prediction[0,:]  # shape (10,)
+prediction = np.round(prediction.astype(np.float), 1)
+
+print("Real class: " + str(y_toPredict))
+print("Classification: " + str(prediction))
+
+
+
+# Save the Model
+model.save('04_model.h5')
+plot_model(model, to_file='04_result.png', show_shapes=True, show_layer_names=True)
+
+
+# Print the model
 import matplotlib.pyplot as plt
 epoch_list = list(range(1, len(hist.history['accuracy']) + 1))
 plt.plot(epoch_list, hist.history['accuracy'], epoch_list, hist.history['val_accuracy'])
-plt.legend(('Training Accuracy', 'Validation Accuracy'))
+plt.legend(('Training Accuracy: ' +  str(score_train[1]), 'Validation Accuracy: ' + str(score_test[1])))
 plt.show()
-

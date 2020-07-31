@@ -1,9 +1,13 @@
+from __future__ import print_function
+
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # This will hide those Keras messages
+
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
 sys.path.append("Modules")
-import clearterminal
 from sklearn.datasets import make_circles
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
