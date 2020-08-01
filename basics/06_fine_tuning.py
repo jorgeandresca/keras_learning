@@ -11,7 +11,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # This will hide those Keras messages
 
 from keras.applications.inception_v3 import InceptionV3, preprocess_input
 from keras.preprocessing.image import ImageDataGenerator
-from keras.optimizers import SGD
+from keras.optimizers import Adam
+
 
 from keras.models import Model
 from keras.layers import Dense, GlobalAveragePooling2D
@@ -138,14 +139,39 @@ print('Test loss: ', score_test[0])
 print('Test accuracy: ', score_test[1])
 
 
-# Print the model
-epoch_list = list(range(1, len(hist.history['accuracy']) + 1))
-plt.plot(epoch_list, hist.history['accuracy'], epoch_list, hist.history['val_accuracy'])
-plt.legend(('Training Accuracy: ' +  str(score_train[1]), 'Validation Accuracy: ' + str(score_test[1])))
-plt.savefig('05_model_chart.png')
-plt.show()
 
 
-model.save('05_model.h5')
+#  --- Fine Tuning ---
+layers_to_freeze = 172
+for layer in model.layers[:layers_to_freeze]:
+    layer.trainable = False
+for layer in model.layers[layers_to_freeze:]:
+    layer.trainable = True
+
+
+
+# Compile
+#   We user categorical_crossentropy since our model is trying to classify categorical result
+model.compile(optimizer=Adam(learning_rate=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
+
+
+# Fit
+hist = model.fit(
+    train_generator,
+    epochs=num_epochs,
+    steps_per_epoch=num_train_samples // batch_size,
+    validation_data=validation_generator,
+    validation_steps=num_validate_samples // batch_size
+    #class_weight='auto'
+)
+
+# Evaluate the model
+score_train = np.round(model.evaluate(train_generator, verbose=0), 2)
+score_test = np.round(model.evaluate(validation_generator, verbose=0), 2)
+print('Test loss: ', score_test[0])
+print('Test accuracy: ', score_test[1])
+
+
+model.save('06_model.h5')
 
 

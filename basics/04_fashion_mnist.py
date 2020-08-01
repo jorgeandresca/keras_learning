@@ -14,7 +14,7 @@ from keras.utils.vis_utils import plot_model
 from keras.models import load_model
 import random
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 
 
@@ -128,7 +128,6 @@ print("Classification: " + str(prediction))
 
 
 # Print the model
-import matplotlib.pyplot as plt
 epoch_list = list(range(1, len(hist.history['accuracy']) + 1))
 plt.plot(epoch_list, hist.history['accuracy'], epoch_list, hist.history['val_accuracy'])
 plt.legend(('Training Accuracy: ' +  str(score_train[1]), 'Validation Accuracy: ' + str(score_test[1])))
@@ -139,4 +138,4 @@ plt.show()
 
 # Save the Model
 model.save('04_model.h5')
-plot_model(model, to_file='04_model_arch.png', show_shapes=True, show_layer_names=True)
+# plot_model(model, to_file='04_model_arch.png', show_shapes=True, show_layer_names=True)
