@@ -28,10 +28,10 @@ img_rows, img_cols = 28, 28;
 (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
 
 # Shrinking the dataset
-x_train = x_train[:1]
-y_train = y_train[:1]
-x_test = x_test[:500]
-y_test = y_test[:500]
+x_train = x_train[:5000]  # 5000
+y_train = y_train[:5000]  # 5000
+x_test = x_test[:500]  # 500
+y_test = y_test[:500]  # 500
 
 print(x_train.shape)
 print(y_train.shape)
@@ -100,8 +100,8 @@ model.compile(loss=keras.losses.categorical_crossentropy, optimizer='adam', metr
 hist = model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1, validation_data=(x_test, y_test))
 
 # Evaluate the model
-score_train = np.round(model.evaluate(x_test, y_test, verbose=0), 1)
-score_test = np.round(model.evaluate(x_test, y_test, verbose=0), 1)
+score_train = np.round(model.evaluate(x_test, y_test, verbose=0), 2)
+score_test = np.round(model.evaluate(x_test, y_test, verbose=0), 2)
 print('Test loss: ', score_test[0])
 print('Test accuracy: ', score_test[1])
 
@@ -116,12 +116,11 @@ x_toPredict = x_test[random]
 y_toPredict = y_test[random]
 
 
-x_toPredict = np.array([x_toPredict])  # shape (1,28,28,1
-print("x_toPredict shape: " + str(x_toPredict.shape))
+x_toPredict = np.array([x_toPredict])  # shape (1,28,28,1)
 
-prediction = model.predict(x=x_toPredict, verbose=1)  # shape (1,10)
+prediction = model.predict(x=x_toPredict, verbose=0)  # shape (1,10)
 prediction = prediction[0,:]  # shape (10,)
-prediction = np.round(prediction.astype(np.float), 1)
+prediction = np.round(prediction.astype(np.float), 2)
 
 print("Real class: " + str(y_toPredict))
 print("Classification: " + str(prediction))
