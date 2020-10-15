@@ -12,7 +12,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 
 # Loading data from Excel
-df = pd.read_csv('../data/housepricedata.csv')
+df = pd.read_csv('./data/housepricedata.csv')
 
 dataset = df.values
 cols_count = dataset.shape[1]
@@ -36,20 +36,19 @@ X_val, X_test, Y_val, Y_test = train_test_split(X_val_and_test, Y_val_and_test, 
 
 
 
-# Building the model
+# Model - Architecture
 model = Sequential([
         Dense(32, activation='relu', input_shape=(10,)),
         Dense(32, activation='relu'),
         Dense(1, activation='sigmoid')])
 
+# Model - Setup
 model.compile(optimizer='sgd', loss='binary_crossentropy', metrics=['accuracy'])
 
-
+# Model - Fit data
 hist = model.fit(X_train, Y_train, batch_size=32, epochs=100, validation_data=(X_val, Y_val))
 
-model.save("model.h5")
-
-
+# Model - Evaluation
 model.evaluate(X_test, Y_test)[1]
 
 plt.plot(hist.history['accuracy'])
