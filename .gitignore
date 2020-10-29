@@ -5,3 +5,4 @@ basics/data/
 *.jpeg
 *.png
 practical/.idea/
+*.h5

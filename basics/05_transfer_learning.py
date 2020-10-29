@@ -63,6 +63,7 @@ num_classes = get_num_subfolders(train_dir)
 print("real_num_train_samples: " + str(real_num_train_samples))
 print("real_num_validate_samples: " + str(real_num_validate_samples))
 print("num_classes: " + str(num_classes))
+print("")
 
 
 # Image generation (data augmentation)
@@ -74,8 +75,8 @@ train_generator = create_img_generator().flow_from_directory(
     train_dir,
     target_size=(image_width, image_height),
     batch_size=batch_size,
-    seed=42,
-    subset='training'  # 2 options: Training / Validation. This works if ImageDataGenerator.validation_split is set.
+    seed=42
+    #subset='training'  # 2 options: Training / Validation. This works if ImageDataGenerator.validation_split is set.
 )
 
 
@@ -117,7 +118,7 @@ for layer in inceptionV3_base_model.layers:
     layer.trainable = False
 
 # Compile
-#   We user categorical_crossentropy since our model is trying to classify categorical result
+#   We use categorical_crossentropy since our model is trying to classify categorical result
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 

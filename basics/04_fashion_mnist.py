@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 
 num_classes = 10;
 batch_size = 128;  # 128
-epochs = 50;  # 50
+epochs = 3;  # 50
 dropout = 0.8
 img_rows, img_cols = 28, 28;
 
@@ -129,6 +129,10 @@ print("Classification: " + str(prediction))
 
 # Print the model
 epoch_list = list(range(1, len(hist.history['accuracy']) + 1))
+print()
+print(epoch_list)
+print(len(hist.history['accuracy']))
+print(hist.history['accuracy'])
 plt.plot(epoch_list, hist.history['accuracy'], epoch_list, hist.history['val_accuracy'])
 plt.legend(('Training Accuracy: ' +  str(score_train[1]), 'Validation Accuracy: ' + str(score_test[1])))
 
